@@ -9,6 +9,16 @@ const Home: React.FC = () => {
   const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
+  const displayProperties = [
+    "First Name",
+    "Last Name",
+    "City",
+    "Degree",
+    "Specialties",
+    "Years of Experience",
+    "Phone Number",
+  ];
+
   useEffect(() => {
     const fetchAdvocates = async () => {
       try {
@@ -26,11 +36,11 @@ const Home: React.FC = () => {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // make search case-insensative
-    const text: string = e.target.value.toLowerCase();
+    const searchText: string = e.target.value.toLowerCase();
     // keep case user entered for display purposes
     setSearchTerm(e.target.value);
 
-    if (text === "") {
+    if (searchText === "") {
       // if user clears search entry, reset table
       setFilteredAdvocates(advocates);
     } else {
@@ -47,7 +57,7 @@ const Home: React.FC = () => {
           console.log(searchableProperties);
 
           return searchableProperties.some((property) =>
-            property.toLowerCase().includes(text)
+            property.toLowerCase().includes(searchText)
           );
         }
       );
@@ -57,7 +67,6 @@ const Home: React.FC = () => {
   };
 
   const onClick = () => {
-    console.log(advocates);
     setFilteredAdvocates(advocates);
   };
 
@@ -80,33 +89,36 @@ const Home: React.FC = () => {
       </div>
       <br />
       <br />
-      <table>
+      <table className="border-collapse mt-25 mb-25 text-lg shadow-neutral-950 w-full">
         <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>City</th>
-            <th>Degree</th>
-            <th>Specialties</th>
-            <th>Years of Experience</th>
-            <th>Phone Number</th>
+          <tr className="bg-solace text-white text-left">
+            {displayProperties.map((prop) => (
+              <th className="py-12 px-15">{prop}</th>
+            ))}
           </tr>
         </thead>
         <tbody>
-          {filteredAdvocates.map((advocate) => {
+          {filteredAdvocates.map((advocate, index) => {
             return (
-              <tr key={advocate.id}>
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
-                <td>{advocate.city}</td>
-                <td>{advocate.degree}</td>
-                <td>
+              <tr
+                key={advocate.id}
+                className={`${
+                  index % 2 === 0
+                    ? "bg-gray-200"
+                    : "border-b odd:border-gray-400"
+                }`}
+              >
+                <td className="py-12 px-15">{advocate.firstName}</td>
+                <td className="py-12 px-15">{advocate.lastName}</td>
+                <td className="py-12 px-15">{advocate.city}</td>
+                <td className="py-12 px-15">{advocate.degree}</td>
+                <td className="py-12 px-15">
                   {advocate.specialties.map((s) => (
                     <div>{s}</div>
                   ))}
                 </td>
-                <td>{advocate.yearsOfExperience}</td>
-                <td>{advocate.phoneNumber}</td>
+                <td className="py-12 px-15">{advocate.yearsOfExperience}</td>
+                <td className="py-12 px-15">{advocate.phoneNumber}</td>
               </tr>
             );
           })}
