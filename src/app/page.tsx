@@ -71,7 +71,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <main className="m-16 antialiased font-sans">
+    <main className="m-16 antialiased">
       <h1>Solace Advocates</h1>
       <br />
       <br />
@@ -93,7 +93,9 @@ const Home: React.FC = () => {
         <thead>
           <tr className="bg-solace text-white text-left font-bold border-b border-slate-400">
             {displayProperties.map((prop) => (
-              <th className="py-6 px-16">{prop}</th>
+              <th className="py-6 px-16" key={prop}>
+                {prop}
+              </th>
             ))}
           </tr>
         </thead>

@@ -16,6 +16,10 @@ const config: Config = {
       colors: {
         solace: "#1d4339",
       },
+      fontFamily: {
+        inter: ["var(--font-inter)", "sans-serif"],
+        lato: ["var(--font-lato)", "sans-serif"],
+      },
     },
   },
   plugins: [],
