@@ -71,7 +71,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <main style={{ margin: "24px" }}>
+    <main className="m-16 antialiased font-sans">
       <h1>Solace Advocates</h1>
       <br />
       <br />
@@ -89,11 +89,11 @@ const Home: React.FC = () => {
       </div>
       <br />
       <br />
-      <table className="border-collapse mt-25 mb-25 text-lg shadow-neutral-950 w-full">
+      <table className="border-collapse mx-25 text-md shadow-lg min-w-96 rounded-xl overflow-hidden w-full">
         <thead>
-          <tr className="bg-solace text-white text-left">
+          <tr className="bg-solace text-white text-left font-bold border-b border-slate-400">
             {displayProperties.map((prop) => (
-              <th className="py-12 px-15">{prop}</th>
+              <th className="py-6 px-16">{prop}</th>
             ))}
           </tr>
         </thead>
@@ -102,23 +102,21 @@ const Home: React.FC = () => {
             return (
               <tr
                 key={advocate.id}
-                className={`${
-                  index % 2 === 0
-                    ? "bg-gray-200"
-                    : "border-b odd:border-gray-400"
+                className={`border-b border-slate-400 hover:bg-gray-100 ${
+                  index % 2 === 0 ? "bg-gray-50" : ""
                 }`}
               >
-                <td className="py-12 px-15">{advocate.firstName}</td>
-                <td className="py-12 px-15">{advocate.lastName}</td>
-                <td className="py-12 px-15">{advocate.city}</td>
-                <td className="py-12 px-15">{advocate.degree}</td>
-                <td className="py-12 px-15">
+                <td className="py-6 px-16">{advocate.firstName}</td>
+                <td className="py-6 px-16">{advocate.lastName}</td>
+                <td className="py-6 px-16">{advocate.city}</td>
+                <td className="py-6 px-16">{advocate.degree}</td>
+                <td className="py-6 px-16">
                   {advocate.specialties.map((s) => (
                     <div>{s}</div>
                   ))}
                 </td>
-                <td className="py-12 px-15">{advocate.yearsOfExperience}</td>
-                <td className="py-12 px-15">{advocate.phoneNumber}</td>
+                <td className="py-6 px-16">{advocate.yearsOfExperience}</td>
+                <td className="py-6 px-16">{advocate.phoneNumber}</td>
               </tr>
             );
           })}
