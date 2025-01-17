@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 
 import { Advocate } from "./types/advocate";
+import { WaveDark } from "./svg/wave-dark";
+import { WaveMid } from "./svg/wave-mid";
 
 const Home: React.FC = () => {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
@@ -72,9 +74,19 @@ const Home: React.FC = () => {
 
   return (
     <main className="m-16 antialiased">
-      <h1>Solace Advocates</h1>
-      <br />
-      <br />
+      <div className="w-full mb-[-8px]">
+        <WaveDark />
+      </div>
+      <div className="bg-gradient-to-b from-bannerFadeDark to-bannerFadeLight py-8 text-white text-center">
+        <p className="font-mollieGlaston text-5xl">Solace Advocates</p>
+        <p className="pt-4">
+          Use the following tool to find available advocates in your area
+        </p>
+      </div>
+      <div className="w-full mt-[-9px]">
+        <WaveMid />
+      </div>
+
       <div>
         <p>Search</p>
         <p>
@@ -91,7 +103,7 @@ const Home: React.FC = () => {
       <br />
       <table className="border-collapse mx-25 text-md shadow-lg min-w-96 rounded-xl overflow-hidden w-full">
         <thead>
-          <tr className="bg-solace text-white text-left font-bold border-b border-slate-400">
+          <tr className="bg-solacePrimary text-white text-left font-bold border-b border-slate-400">
             {displayProperties.map((prop) => (
               <th className="py-6 px-16" key={prop}>
                 {prop}

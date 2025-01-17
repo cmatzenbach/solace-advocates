@@ -14,11 +14,14 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       colors: {
-        solace: "#1d4339",
+        solacePrimary: "#1d4339",
+        bannerFadeDark: "#285e50",
+        bannerFadeLight: "#3f937c",
       },
       fontFamily: {
         inter: ["var(--font-inter)", "sans-serif"],
         lato: ["var(--font-lato)", "sans-serif"],
+        mollieGlaston: ["Mollie Glaston", "sans-serif"],
       },
     },
   },
