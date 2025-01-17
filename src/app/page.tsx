@@ -25,24 +25,35 @@ const Home: React.FC = () => {
   }, []);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const text: string = e.target.value;
-    setSearchTerm(text);
+    // make search case-insensative
+    const text: string = e.target.value.toLowerCase();
+    // keep case user entered for display purposes
+    setSearchTerm(e.target.value);
 
-    console.log("filtering advocates...");
-    const filteredAdvocates: Advocate[] = advocates.filter(
-      (advocate: Advocate) => {
-        return (
-          advocate.firstName.includes(searchTerm) ||
-          advocate.lastName.includes(searchTerm) ||
-          advocate.city.includes(searchTerm) ||
-          advocate.degree.includes(searchTerm) ||
-          advocate.specialties.includes(searchTerm) ||
-          advocate.yearsOfExperience.includes(searchTerm)
-        );
-      }
-    );
+    if (text === "") {
+      // if user clears search entry, reset table
+      setFilteredAdvocates(advocates);
+    } else {
+      const filteredAdvocates: Advocate[] = advocates.filter(
+        (advocate: Advocate) => {
+          const searchableProperties = [
+            advocate.firstName,
+            advocate.lastName,
+            advocate.city,
+            advocate.degree,
+            ...advocate.specialties,
+            advocate.yearsOfExperience.toString(),
+          ];
+          console.log(searchableProperties);
 
-    setFilteredAdvocates(filteredAdvocates);
+          return searchableProperties.some((property) =>
+            property.toLowerCase().includes(text)
+          );
+        }
+      );
+
+      setFilteredAdvocates(filteredAdvocates);
+    }
   };
 
   const onClick = () => {
