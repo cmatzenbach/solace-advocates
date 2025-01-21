@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { debounce } from "lodash";
+import { fetchAdvocates } from "./utils/routes";
 
 import { Advocate } from "./types/advocate";
 import { WaveDark } from "./svg/wave-dark";
@@ -8,8 +10,8 @@ import { WaveMid } from "./svg/wave-mid";
 
 const Home: React.FC = () => {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
 
   const displayProperties = [
     "First Name",
@@ -21,55 +23,59 @@ const Home: React.FC = () => {
     "Phone Number",
   ];
 
-  useEffect(() => {
-    const fetchAdvocates = async () => {
+  const fetchData = useCallback(
+    debounce(async () => {
       try {
-        const response = await fetch("/api/advocates");
-        const data = await response.json();
-        setAdvocates(data.data);
-        setFilteredAdvocates(data.data);
+        console.log("FETCHING DATA", page, searchTerm);
+        const { data } = await fetchAdvocates(page, 20, searchTerm);
+        console.log(data);
+        setAdvocates(data);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching advocates:", error);
       }
-    };
+    }, 300),
+    [page, searchTerm]
+  );
 
-    fetchAdvocates();
-  }, []);
+  useEffect(() => {
+    fetchData();
+  }, [page, searchTerm]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // make search case-insensative
-    const searchText: string = e.target.value.toLowerCase();
-    // keep case user entered for display purposes
     setSearchTerm(e.target.value);
+    // // make search case-insensative
+    // const searchText: string = e.target.value.toLowerCase();
+    // // keep case user entered for display purposes
+    // setSearchTerm(e.target.value);
 
-    if (searchText === "") {
-      // if user clears search entry, reset table
-      setFilteredAdvocates(advocates);
-    } else {
-      const filteredAdvocates: Advocate[] = advocates.filter(
-        (advocate: Advocate) => {
-          const searchableProperties = [
-            advocate.firstName,
-            advocate.lastName,
-            advocate.city,
-            advocate.degree,
-            ...advocate.specialties,
-            advocate.yearsOfExperience.toString(),
-          ];
-          console.log(searchableProperties);
+    // if (searchText === "") {
+    //   // if user clears search entry, reset table
+    //   setFilteredAdvocates(advocates);
+    // } else {
+    //   const filteredAdvocates: Advocate[] = advocates.filter(
+    //     (advocate: Advocate) => {
+    //       const searchableProperties = [
+    //         advocate.firstName,
+    //         advocate.lastName,
+    //         advocate.city,
+    //         advocate.degree,
+    //         ...advocate.specialties,
+    //         advocate.yearsOfExperience.toString(),
+    //       ];
+    //       console.log(searchableProperties);
 
-          return searchableProperties.some((property) =>
-            property.toLowerCase().includes(searchText)
-          );
-        }
-      );
+    //       return searchableProperties.some((property) =>
+    //         property.toLowerCase().includes(searchText)
+    //       );
+    //     }
+    //   );
 
-      setFilteredAdvocates(filteredAdvocates);
-    }
+    //   setFilteredAdvocates(filteredAdvocates);
+    // }
   };
 
   const onClick = () => {
-    setFilteredAdvocates(advocates);
+    setSearchTerm("");
   };
 
   return (
@@ -113,7 +119,7 @@ const Home: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredAdvocates.map((advocate, index) => {
+            {advocates.map((advocate, index) => {
               return (
                 <tr
                   key={advocate.id}
