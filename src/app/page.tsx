@@ -9,31 +9,27 @@ import { WaveMid } from "./svg/wave-mid";
 import { ClearIcon } from "./icons/clear-icon";
 import { Pagination } from "./components/pagination";
 
-const AdvocateRow = ({
-  advocate,
-  index,
-}: {
-  advocate: Advocate;
-  index: number;
-}) => (
-  <tr
-    key={advocate.id}
-    className={`border-b border-slate-400 hover:bg-gray-100 ${
-      index % 2 === 0 ? "bg-gray-50" : ""
-    }`}
-  >
-    <td className="py-6 px-16">{advocate.firstName}</td>
-    <td className="py-6 px-16">{advocate.lastName}</td>
-    <td className="py-6 px-16">{advocate.city}</td>
-    <td className="py-6 px-16">{advocate.degree}</td>
-    <td className="py-6 px-16">
-      {advocate.specialties.map((s) => (
-        <div>{s}</div>
-      ))}
-    </td>
-    <td className="py-6 px-16">{advocate.yearsOfExperience}</td>
-    <td className="py-6 px-16">{advocate.phoneNumber}</td>
-  </tr>
+const AdvocateRow = React.memo(
+  ({ advocate, index }: { advocate: Advocate; index: number }) => (
+    <tr
+      key={advocate.id}
+      className={`border-b border-slate-400 hover:bg-gray-100 ${
+        index % 2 === 0 ? "bg-gray-50" : ""
+      }`}
+    >
+      <td className="py-6 px-16">{advocate.firstName}</td>
+      <td className="py-6 px-16">{advocate.lastName}</td>
+      <td className="py-6 px-16">{advocate.city}</td>
+      <td className="py-6 px-16">{advocate.degree}</td>
+      <td className="py-6 px-16">
+        {advocate.specialties.map((s, i) => (
+          <div key={i}>{s}</div>
+        ))}
+      </td>
+      <td className="py-6 px-16">{advocate.yearsOfExperience}</td>
+      <td className="py-6 px-16">{advocate.phoneNumber}</td>
+    </tr>
+  )
 );
 
 const Home: React.FC = () => {
@@ -51,8 +47,8 @@ const Home: React.FC = () => {
     "Phone Number",
   ];
 
-  const fetchData = useCallback(
-    debounce(async () => {
+  const debouncedFetchData = useCallback(
+    debounce(async (page: number, searchTerm: string) => {
       try {
         const { data } = await fetchAdvocates(page, 20, searchTerm);
         setAdvocates(data);
@@ -60,8 +56,12 @@ const Home: React.FC = () => {
         console.error("Error fetching advocates:", error);
       }
     }, 300),
-    [page, searchTerm]
+    []
   );
+
+  const fetchData = useCallback(() => {
+    debouncedFetchData(page, searchTerm);
+  }, [page, searchTerm, debouncedFetchData]);
 
   useEffect(() => {
     fetchData();
