@@ -5,7 +5,6 @@ export const fetchAdvocates = async (
   limit: number = 20,
   search: string = ""
 ): Promise<GetAdvocatesResponse> => {
-  console.log(page, limit, search);
   const params = new URLSearchParams({
     page: page.toString(),
     limit: limit.toString(),
