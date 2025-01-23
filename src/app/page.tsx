@@ -5,8 +5,36 @@ import { debounce } from "lodash";
 import { fetchAdvocates } from "./utils/routes";
 
 import { Advocate } from "./types/advocate";
-import { WaveDark } from "./svg/wave-dark";
 import { WaveMid } from "./svg/wave-mid";
+import { ClearIcon } from "./icons/clear-icon";
+import { Pagination } from "./components/pagination";
+
+const AdvocateRow = ({
+  advocate,
+  index,
+}: {
+  advocate: Advocate;
+  index: number;
+}) => (
+  <tr
+    key={advocate.id}
+    className={`border-b border-slate-400 hover:bg-gray-100 ${
+      index % 2 === 0 ? "bg-gray-50" : ""
+    }`}
+  >
+    <td className="py-6 px-16">{advocate.firstName}</td>
+    <td className="py-6 px-16">{advocate.lastName}</td>
+    <td className="py-6 px-16">{advocate.city}</td>
+    <td className="py-6 px-16">{advocate.degree}</td>
+    <td className="py-6 px-16">
+      {advocate.specialties.map((s) => (
+        <div>{s}</div>
+      ))}
+    </td>
+    <td className="py-6 px-16">{advocate.yearsOfExperience}</td>
+    <td className="py-6 px-16">{advocate.phoneNumber}</td>
+  </tr>
+);
 
 const Home: React.FC = () => {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
@@ -26,9 +54,7 @@ const Home: React.FC = () => {
   const fetchData = useCallback(
     debounce(async () => {
       try {
-        console.log("FETCHING DATA", page, searchTerm);
         const { data } = await fetchAdvocates(page, 20, searchTerm);
-        console.log(data);
         setAdvocates(data);
       } catch (error) {
         console.error("Error fetching advocates:", error);
@@ -43,35 +69,6 @@ const Home: React.FC = () => {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    // // make search case-insensative
-    // const searchText: string = e.target.value.toLowerCase();
-    // // keep case user entered for display purposes
-    // setSearchTerm(e.target.value);
-
-    // if (searchText === "") {
-    //   // if user clears search entry, reset table
-    //   setFilteredAdvocates(advocates);
-    // } else {
-    //   const filteredAdvocates: Advocate[] = advocates.filter(
-    //     (advocate: Advocate) => {
-    //       const searchableProperties = [
-    //         advocate.firstName,
-    //         advocate.lastName,
-    //         advocate.city,
-    //         advocate.degree,
-    //         ...advocate.specialties,
-    //         advocate.yearsOfExperience.toString(),
-    //       ];
-    //       console.log(searchableProperties);
-
-    //       return searchableProperties.some((property) =>
-    //         property.toLowerCase().includes(searchText)
-    //       );
-    //     }
-    //   );
-
-    //   setFilteredAdvocates(filteredAdvocates);
-    // }
   };
 
   const onClick = () => {
@@ -80,12 +77,9 @@ const Home: React.FC = () => {
 
   return (
     <main className="antialiased">
-      <div className="w-full mb-[-8px]">
-        <WaveDark />
-      </div>
       <div className="bg-gradient-to-b from-bannerFadeDark to-bannerFadeLight py-8 text-white text-center">
         <p className="font-mollieGlaston text-5xl">Solace Advocates</p>
-        <p className="pt-4">
+        <p className="pt-4 text-lg">
           Use the following tool to find available advocates in your area
         </p>
       </div>
@@ -94,20 +88,26 @@ const Home: React.FC = () => {
       </div>
 
       <div className="m-16">
-        <div>
-          <p>Search</p>
-          <p>
-            Searching for: <span id="search-term">{searchTerm}</span>
-          </p>
+        <div className="flex items-center mb-4">
           <input
-            style={{ border: "1px solid black" }}
+            className="w-1/4 bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border-2 border-slate-500 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-solacePrimary hover:border-solacePrimary shadow-sm focus:shadow"
+            placeholder="Search Term"
             value={searchTerm}
             onChange={onChange}
           />
-          <button onClick={onClick}>Reset Search</button>
+
+          <div className="ml-2 cursor-pointer" onClick={onClick}>
+            <ClearIcon styles="size-8 text-red-400 hover:text-red-500" />
+          </div>
+
+          <div className="ml-auto">
+            <Pagination
+              currentPage={page}
+              totalPages={page}
+              setPage={setPage}
+            />
+          </div>
         </div>
-        <br />
-        <br />
         <table className="border-collapse mx-25 text-md shadow-lg min-w-96 rounded-xl overflow-hidden w-full">
           <thead>
             <tr className="bg-solacePrimary text-white text-left font-bold border-b border-slate-400">
@@ -119,28 +119,13 @@ const Home: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {advocates.map((advocate, index) => {
-              return (
-                <tr
-                  key={advocate.id}
-                  className={`border-b border-slate-400 hover:bg-gray-100 ${
-                    index % 2 === 0 ? "bg-gray-50" : ""
-                  }`}
-                >
-                  <td className="py-6 px-16">{advocate.firstName}</td>
-                  <td className="py-6 px-16">{advocate.lastName}</td>
-                  <td className="py-6 px-16">{advocate.city}</td>
-                  <td className="py-6 px-16">{advocate.degree}</td>
-                  <td className="py-6 px-16">
-                    {advocate.specialties.map((s) => (
-                      <div>{s}</div>
-                    ))}
-                  </td>
-                  <td className="py-6 px-16">{advocate.yearsOfExperience}</td>
-                  <td className="py-6 px-16">{advocate.phoneNumber}</td>
-                </tr>
-              );
-            })}
+            {advocates.map((advocate, index) => (
+              <AdvocateRow
+                key={advocate.id}
+                advocate={advocate}
+                index={index}
+              />
+            ))}
           </tbody>
         </table>
       </div>
