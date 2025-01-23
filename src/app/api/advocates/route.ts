@@ -25,7 +25,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
     sql`${advocates.phoneNumber}::text`,
   ];
 
-  //
+  // construct ILIKE and OR statements
   const searchCondition = searchableFields
     .map((field) => sql`${field} ILIKE ${`%${search}%`}`)
     .reduce(
@@ -33,19 +33,15 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
       null
     );
 
-  // Build the main query
+  // build the main query
   let query = db.select().from(advocates).limit(limit).offset(offset);
   if (searchCondition) {
     query = query.where(searchCondition);
   }
 
-  const { sql: generatedSQL, params } = query.toSQL();
-  console.log("Generated SQL:", generatedSQL);
-  console.log("Query Parameters:", params);
-
   const data = await query;
 
-  // Build the total count query
+  // build count query to get totals
   const totalQuery = db
     .select({ count: sql<number>`COUNT(*)` })
     .from(advocates)
