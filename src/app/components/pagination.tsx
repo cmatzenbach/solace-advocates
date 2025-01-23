@@ -18,7 +18,7 @@ export const Pagination = ({
   };
 
   const prevPage = () => {
-    if (currentPage < totalPages) {
+    if (currentPage !== 1) {
       setPage(currentPage - 1);
     }
   };
