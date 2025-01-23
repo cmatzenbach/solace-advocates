@@ -9,6 +9,16 @@ import { WaveMid } from "./svg/wave-mid";
 import { ClearIcon } from "./icons/clear-icon";
 import { Pagination } from "./components/pagination";
 
+const DISPLAY_PROPERTIES = [
+  "First Name",
+  "Last Name",
+  "City",
+  "Degree",
+  "Specialties",
+  "Years of Experience",
+  "Phone Number",
+];
+
 const AdvocateRow = React.memo(
   ({ advocate, index }: { advocate: Advocate; index: number }) => (
     <tr
@@ -36,16 +46,6 @@ const Home: React.FC = () => {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
-
-  const displayProperties = [
-    "First Name",
-    "Last Name",
-    "City",
-    "Degree",
-    "Specialties",
-    "Years of Experience",
-    "Phone Number",
-  ];
 
   const debouncedFetchData = useCallback(
     debounce(async (page: number, searchTerm: string) => {
@@ -111,7 +111,7 @@ const Home: React.FC = () => {
         <table className="border-collapse mx-25 text-md shadow-lg min-w-96 rounded-xl overflow-hidden w-full">
           <thead>
             <tr className="bg-solacePrimary text-white text-left font-bold border-b border-slate-400">
-              {displayProperties.map((prop) => (
+              {DISPLAY_PROPERTIES.map((prop) => (
                 <th className="py-6 px-16" key={prop}>
                   {prop}
                 </th>
