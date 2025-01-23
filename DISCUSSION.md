@@ -1,0 +1,11 @@
+Improvements I would like to have made but didn't have time:
+
+- Add loading spinner while data is fetching
+- Add more rows to table to properly implement pagination (currently there is only one page, so pagination controls are useless, and the handling of navigating to different pages and displaying that data was not implemented)
+- Add more styling to pagination - currently there are no disabled states, so it is unclear to user if they can advance forwards or backwards by button appearances
+- I added a "results per page" functionality to the API, but did not implement that in the front end - I would've liked to add an additional field so the user can control the amount of results displayed on each page
+- Some of the styling does not look great - for example, the red clear icon, which awkwardly stands out because it is the only red item on the entire page.  Additionally, I would like to add a tooltip so the user knows exactly what that icon does
+- In terms of searching, there were two ways I could've gone about it - either having a separate input field where the user can select the column they want to search by, or to have a global search across all columns. Since the table does not have many columns, and because I have a preference for cross-column searching (I find it cumbersome to have to select a field before searching), I chose to implement it that way - however, if the table had a ton of columns, the query would not be as efficient, so that may need to be revisited.
+- Code organization - I don't love having files named "route.ts" and "routes.ts", and think the routes.ts file (which contains fetchAdvocates) could've been named better. Also, the svg icon component could've gone in the icons/ folder.
+- Typescript errors - there were a few typescript errors I didn't get to, namely in route.ts, that had to do with drizzle (it didn't like some of my query construction). If I had more time, I would investigate why the types weren't aligning as expected (however everything functions fine, and upon inspecting the queries they were built correctly, so these were determined to not be critical errors)
+- Plain HTML tables are ugly and a bit hard to style, so I would've liked to use a component library that could provide more beautiful tables OOTB

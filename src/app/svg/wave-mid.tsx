@@ -1,0 +1,18 @@
+export const WaveMid = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="100%"
+    height="100%"
+    viewBox="0 0 1512 54"
+    fill="none"
+  >
+    <g transform="scale(1,-1) translate(0,-54)">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M-2 15.3985L124.333 19.1842C250.667 22.9699 503.333 30.5413 756 28.0175C1008.67 25.4937 1261.33 12.8747 1387.67 6.56514L1514 0.255615V53.2556H1387.67C1261.33 53.2556 1008.67 53.2556 756 53.2556C503.333 53.2556 250.667 53.2556 124.333 53.2556H-2V15.3985Z"
+        fill="#3f937c"
+      ></path>
+    </g>
+  </svg>
+);

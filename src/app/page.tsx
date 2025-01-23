@@ -1,91 +1,136 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { debounce } from "lodash";
+import { fetchAdvocates } from "./utils/routes";
 
-export default function Home() {
-  const [advocates, setAdvocates] = useState([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState([]);
+import { Advocate } from "./types/advocate";
+import { WaveMid } from "./svg/wave-mid";
+import { ClearIcon } from "./icons/clear-icon";
+import { Pagination } from "./components/pagination";
+
+const DISPLAY_PROPERTIES = [
+  "First Name",
+  "Last Name",
+  "City",
+  "Degree",
+  "Specialties",
+  "Years of Experience",
+  "Phone Number",
+];
+
+const AdvocateRow = React.memo(
+  ({ advocate, index }: { advocate: Advocate; index: number }) => (
+    <tr
+      key={advocate.id}
+      className={`border-b border-slate-400 hover:bg-gray-100 ${
+        index % 2 === 0 ? "bg-gray-50" : ""
+      }`}
+    >
+      <td className="py-6 px-16">{advocate.firstName}</td>
+      <td className="py-6 px-16">{advocate.lastName}</td>
+      <td className="py-6 px-16">{advocate.city}</td>
+      <td className="py-6 px-16">{advocate.degree}</td>
+      <td className="py-6 px-16">
+        {advocate.specialties.map((s, i) => (
+          <div key={i}>{s}</div>
+        ))}
+      </td>
+      <td className="py-6 px-16">{advocate.yearsOfExperience}</td>
+      <td className="py-6 px-16">{advocate.phoneNumber}</td>
+    </tr>
+  )
+);
+
+const Home: React.FC = () => {
+  const [advocates, setAdvocates] = useState<Advocate[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
+
+  const debouncedFetchData = debounce(
+    async (page: number, searchTerm: string) => {
+      try {
+        const { data } = await fetchAdvocates(page, 20, searchTerm);
+        setAdvocates(data);
+      } catch (error) {
+        console.error("Error fetching advocates:", error);
+      }
+    },
+    300
+  );
+
+  const fetchData = useCallback(() => {
+    debouncedFetchData(page, searchTerm);
+  }, [page, searchTerm, debouncedFetchData]);
 
   useEffect(() => {
-    console.log("fetching advocates...");
-    fetch("/api/advocates").then((response) => {
-      response.json().then((jsonResponse) => {
-        setAdvocates(jsonResponse.data);
-        setFilteredAdvocates(jsonResponse.data);
-      });
-    });
-  }, []);
+    fetchData();
+  }, [page, searchTerm]);
 
-  const onChange = (e) => {
-    const searchTerm = e.target.value;
-
-    document.getElementById("search-term").innerHTML = searchTerm;
-
-    console.log("filtering advocates...");
-    const filteredAdvocates = advocates.filter((advocate) => {
-      return (
-        advocate.firstName.includes(searchTerm) ||
-        advocate.lastName.includes(searchTerm) ||
-        advocate.city.includes(searchTerm) ||
-        advocate.degree.includes(searchTerm) ||
-        advocate.specialties.includes(searchTerm) ||
-        advocate.yearsOfExperience.includes(searchTerm)
-      );
-    });
-
-    setFilteredAdvocates(filteredAdvocates);
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
   };
 
   const onClick = () => {
-    console.log(advocates);
-    setFilteredAdvocates(advocates);
+    setSearchTerm("");
   };
 
   return (
-    <main style={{ margin: "24px" }}>
-      <h1>Solace Advocates</h1>
-      <br />
-      <br />
-      <div>
-        <p>Search</p>
-        <p>
-          Searching for: <span id="search-term"></span>
+    <main className="antialiased">
+      <div className="bg-gradient-to-b from-bannerFadeDark to-bannerFadeLight py-8 text-white text-center">
+        <p className="font-mollieGlaston text-5xl">Solace Advocates</p>
+        <p className="pt-4 text-lg">
+          Use the following tool to find available advocates in your area
         </p>
-        <input style={{ border: "1px solid black" }} onChange={onChange} />
-        <button onClick={onClick}>Reset Search</button>
       </div>
-      <br />
-      <br />
-      <table>
-        <thead>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>City</th>
-          <th>Degree</th>
-          <th>Specialties</th>
-          <th>Years of Experience</th>
-          <th>Phone Number</th>
-        </thead>
-        <tbody>
-          {filteredAdvocates.map((advocate) => {
-            return (
-              <tr>
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
-                <td>{advocate.city}</td>
-                <td>{advocate.degree}</td>
-                <td>
-                  {advocate.specialties.map((s) => (
-                    <div>{s}</div>
-                  ))}
-                </td>
-                <td>{advocate.yearsOfExperience}</td>
-                <td>{advocate.phoneNumber}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <div className="w-full mt-[-9px]">
+        <WaveMid />
+      </div>
+
+      <div className="m-16">
+        <div className="flex items-center mb-4">
+          <input
+            className="w-1/4 bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border-2 border-slate-500 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-solacePrimary hover:border-solacePrimary shadow-sm focus:shadow"
+            placeholder="Search Term"
+            value={searchTerm}
+            onChange={onChange}
+          />
+
+          <div className="ml-2 cursor-pointer" onClick={onClick}>
+            <ClearIcon styles="size-8 text-red-400 hover:text-red-500" />
+          </div>
+
+          <div className="ml-auto">
+            <Pagination
+              currentPage={page}
+              totalPages={page}
+              setPage={setPage}
+            />
+          </div>
+        </div>
+        <table className="border-collapse mx-25 text-md shadow-lg min-w-96 rounded-xl overflow-hidden w-full">
+          <thead>
+            <tr className="bg-solacePrimary text-white text-left font-bold border-b border-slate-400">
+              {DISPLAY_PROPERTIES.map((prop) => (
+                <th className="py-6 px-16" key={prop}>
+                  {prop}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {advocates.map((advocate, index) => (
+              <AdvocateRow
+                key={advocate.id}
+                advocate={advocate}
+                index={index}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
     </main>
   );
-}
+};
+
+export default Home;
