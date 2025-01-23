@@ -47,16 +47,16 @@ const Home: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
 
-  const debouncedFetchData = useCallback(
-    debounce(async (page: number, searchTerm: string) => {
+  const debouncedFetchData = debounce(
+    async (page: number, searchTerm: string) => {
       try {
         const { data } = await fetchAdvocates(page, 20, searchTerm);
         setAdvocates(data);
       } catch (error) {
         console.error("Error fetching advocates:", error);
       }
-    }, 300),
-    []
+    },
+    300
   );
 
   const fetchData = useCallback(() => {

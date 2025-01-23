@@ -13,7 +13,6 @@ export const fetchAdvocates = async (
   if (search && search !== "") {
     params.append("search", search);
   }
-  console.log(params.toString());
 
   const response = await fetch(`/api/advocates?${params.toString()}`);
   if (!response.ok) {
